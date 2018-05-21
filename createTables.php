@@ -8,7 +8,7 @@ require_once "Database_Connect.php";
 			email varchar(255),
 			slug varchar(255) not null,
 			password varchar(255),
-			registration_date datetime  not null,
+			registration_date datetime not null,
 			activation_key varchar(255) not null,
 			confirmed tinyint(1) not null default 0,
 			suspended tinyint(1) not null default 0,
@@ -92,7 +92,7 @@ require_once "Database_Connect.php";
 			date_created varchar(40) not null,
 			createdby int not null,
 			confirmed int not null,
-			status tinyint not null
+			status tinyint(1) not null
 
 			)";
 	//status: 1 - open, 2 - locked and free, 3 - locked and paid
