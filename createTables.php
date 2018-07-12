@@ -1,197 +1,197 @@
 <?php
 require_once "Database_Connect.php";
 
-	$query="create table if not exists members (
-			id int not null auto_increment, primary key(id),
-			firstname varchar(255) not null,
-			lastname varchar(255) not null,
-			email varchar(255),
-			slug varchar(255) not null,
-			password varchar(255),
-			registration_date datetime not null,
-			activation_key varchar(255) not null,
-			confirmed tinyint(1) not null default 0,
-			suspended tinyint(1) not null default 0,
-			gender char(1) not null,
-			referral_code varchar(6) not null unique,
-			birthdate varchar(50) not null,
-			show_birthdate int not null,
-			phone varchar(20),
-			country_id tinyint(3),
-			timezone varchar(50),
-			points int(11) default 0,
-			FK country_id references country(id)
+	$query="CREATE TABLE IF NOT EXISTS members (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			firstname VARCHAR (255) NOT NULL,
+			lastname VARCHAR (255) NOT NULL,
+			email VARCHAR (255),
+			slug VARCHAR (255) NOT NULL,
+			password VARCHAR (255),
+			registration_date DATETIME NOT NULL,
+			activation_key VARCHAR (255) NOT NULL,
+			confirmed TINYINT (1) NOT NULL DEFAULT 0,
+			suspended TINYINT (1) NOT NULL DEFAULT 0,
+			gender CHAR(1) NOT NULL,
+			referral_code VARCHAR (6) NOT NULL unique,
+			birthdate VARCHAR (50) NOT NULL,
+			show_birthdate TINYINT (1) NOT NULL,
+			phone VARCHAR (20),
+			country_id TINYINT (3),
+			timezone VARCHAR (50),
+			points INT (11) DEFAULT 0,
+			FOREIGN KEY (country_id) REFERENCES country(id)
 			 )";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists member_contacts (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			label varchar(50) not null,
-			value varchar(255) not null
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS member_contacts (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			label VARCHAR (50) NOT NULL,
+			value VARCHAR (255) NOT NULL
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
 	// labels: address, currentcity, website, linkedin, twitter, facebook, phone
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists member_points (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			value int(11) not null,
-			point_type varchar(20) not null,
-			current_total int(11) not null,
-			date_earned datetime not null,
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS member_points (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			value INT (11) NOT NULL,
+			point_type VARCHAR (20) NOT NULL,
+			current_total INT (11) NOT NULL,
+			date_earned DATETIME NOT NULL,
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-		mysql_query($query,$link) or die(mysql_error());
+		mysqli_query($link,$query) or die(mysqli_error());
 
 
-		$query="create table if not exists member_badges (
-				id int not null auto_increment, primary key(id),
-				memberid int not null,
-				badge_type varchar(20) not null,
-				date_earned datetime not null,
-				FK memberid references members(id)
+		$query="CREATE TABLE IF NOT EXISTS member_badges (
+				id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+				memberid INT (11) NOT NULL,
+				badge_type VARCHAR (20) NOT NULL,
+				date_earned DATETIME NOT NULL,
+				FOREIGN KEY (memberid) REFERENCES members(id)
 				)";
-			mysql_query($query,$link) or die(mysql_error());
+			mysqli_query($link,$query) or die(mysqli_error());
 			// create list of badge type and criteria for earning.
 
-	$query="create table if not exists country (
-			id int not null auto_increment, primary key(id),
-			name varchar(50) not null,
-			slug varchar(20) not null
+	$query="CREATE TABLE IF NOT EXISTS country (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			name VARCHAR (50) NOT NULL,
+			slug VARCHAR (20) NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists state (
-			id int not null auto_increment, primary key(id),
+	$query="CREATE TABLE IF NOT EXISTS state (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
 			country_id
-			name varchar(50) not null,
-			slug varchar(20) not null
+			name VARCHAR (50) NOT NULL,
+			slug VARCHAR (20) NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists login_log (
-			id int not null auto_increment, primary key(Id),
-			memberid int not null,
-			last_login timestamp not null
+	$query="CREATE TABLE IF NOT EXISTS login_log (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			last_login TIMESTAMP NOT NULL
 				DEFAULT CURRENT_TIMESTAMP
                 ON UPDATE CURRENT_TIMESTAMP,
-			ip varchar(50) not null,
-			device_type varchar(10) not null,
-			os  varchar(20) not null,
-			browser  varchar(20) not null,
-			FK memberid references members(id)
+			ip VARCHAR (50) NOT NULL,
+			device_type VARCHAR (10) NOT NULL,
+			os  VARCHAR (20) NOT NULL,
+			browser  VARCHAR (20) NOT NULL,
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists pushid (
-			memberid int not null,
-			browserid varchar(50),
-			primary key(memberid, browserid),
-			FK memberid references members(id),
+	$query="CREATE TABLE IF NOT EXISTS pushid (
+			memberid INT (11) NOT NULL,
+			browserid VARCHAR (50),
+			PRIMARY KEY (memberid, browserid),
+			FOREIGN KEY (memberid) REFERENCES members(id),
 				ON UPDATE CASCADE
 				ON DELETE CASCADE
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists social_signup (
-			memberid int not null,
-			oauth_provider varchar(10) not null,
-    		oauth_uid text not null,
-			primary key(memberid),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS social_signup (
+			memberid INT (11) NOT NULL,
+			oauth_provider VARCHAR (10) NOT NULL,
+    		oauth_uid TEXT NOT NULL,
+			PRIMARY KEY (memberid),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 				ON UPDATE CASCADE
 				ON DELETE CASCADE
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists classes (
-			id int not null auto_increment, primary key(id),
-			classname varchar(255) not null,
-			description text not null,
-			logo varchar(255),
-			date_created varchar(40) not null,
-			createdby int not null,
-			confirmed int not null,
-			status tinyint(1) not null
+	$query="CREATE TABLE IF NOT EXISTS classes (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			classname VARCHAR (255) NOT NULL,
+			description TEXT NOT NULL,
+			logo VARCHAR (255),
+			date_created VARCHAR (40) NOT NULL,
+			createdby INT NOT NULL,
+			confirmed INT NOT NULL,
+			status TINYINT (1) NOT NULL
 			)";
 	//status: 1 - open, 2 - locked and free, 3 - locked and paid
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists classes_fees (
-			id int not null auto_increment, primary key(id),
-			classid int(11) not null,
-			amount float not null,
-			currency varchar(10),
-			discount int not null default 0,
-			FK classid references classes(id)
+	$query="CREATE TABLE IF NOT EXISTS classes_fees (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			classid INT (11) NOT NULL,
+			amount FLOAT NOT NULL,
+			currency VARCHAR (10),
+			discount INT NOT NULL DEFAULT 0,
+			FOREIGN KEY (classid) REFERENCES classes(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists classes_admin (
-			memberid int(11) not null,
-			classid int(11) not null,
-			primary key(memberid, classid),
-			FK createdby references members(id)
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS classes_admin (
+			memberid INT (11) NOT NULL,
+			classid INT (11) NOT NULL,
+			PRIMARY KEY (memberid, classid),
+			FOREIGN KEY (createdby) REFERENCES members(id)
+			FOREIGN KEY (memberid) REFERENCES members(id)
 				ON UPDATE CASCADE
 				ON DELETE CASCADE
-			FK classid references classes(id)
+			FOREIGN KEY (classid) REFERENCES classes(id)
 				ON UPDATE CASCADE
 				ON DELETE CASCADE
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists featured_classes (
-			id int not null auto_increment, primary key(Id),
-			classid int not null,
-			FK classid references classes(id)
+	$query="CREATE TABLE IF NOT EXISTS featured_classes (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			classid INT (11) NOT NULL,
+			FOREIGN KEY (classid) REFERENCES classes(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists suggested_classes (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			classname varchar(255),
-			reason text,
-			description text,
-			status tinyint(1)
+	$query="CREATE TABLE IF NOT EXISTS suggested_classes (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			classname VARCHAR (255),
+			reason TEXT,
+			description TEXT,
+			status TINYINT (1)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists class_permission (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			classid int not null,
-			date_sent varchar(60),
-			permitted int
+	$query="CREATE TABLE IF NOT EXISTS class_permission (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			classid INT (11) NOT NULL,
+			date_sent VARCHAR (60),
+			permitted TINYINT (1)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists members_class_relationship (
-			memberid int not null,
-			classid int(11) not null,
-			date_joined datetime not null,
-			primary key(memberid, classid),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS members_class_relationship (
+			memberid INT (11) NOT NULL,
+			classid INT (11) NOT NULL,
+			date_joined DATETIME NOT NULL,
+			PRIMARY KEY (memberid, classid),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 				ON UPDATE CASCADE
 				ON DELETE CASCADE,
-			FK classid references classes(id)
+			FOREIGN KEY (classid) REFERENCES classes(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists classes_default_questions (
-			id int(11) not null, primary key(id),
-			question text not null,
-			data_type varchar(255),
-			form_element_type varchar(255),
-			value text
+	$query="CREATE TABLE IF NOT EXISTS classes_default_questions (
+			id INT (11) NOT NULL, PRIMARY KEY (id),
+			question text NOT NULL,
+			data_type VARCHAR (255),
+			form_element_type VARCHAR (255),
+			value TEXT
 			)";
 			/* value we can set constants like state, country, courses, skills:
 			when we see we populate on frontend with equivalent data
@@ -199,216 +199,215 @@ require_once "Database_Connect.php";
 			value-label relationship and comma to separate options
 			eg book-amazon,song-pop
 			*/
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists classes_default_responses (
-			questionid int(11) not null,
-			memberid int(11) not null,
-			classid int(11) not null,
-			value text not null,
-			primary key(questionid,memberid,live_classid),
-			FK classid references classes(id),
-			FK memberid references members(id),
-			FK questionid references classes_default_questions(id),
+	$query="CREATE TABLE IF NOT EXISTS classes_default_responses (
+			questionid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			classid INT (11) NOT NULL,
+			value TEXT NOT NULL,
+			PRIMARY KEY (questionid,memberid,live_classid),
+			FOREIGN KEY (classid) REFERENCES classes(id),
+			FOREIGN KEY (memberid) REFERENCES members(id),
+			FOREIGN KEY (questionid) REFERENCES classes_default_questions(id),
 			)";
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists class_posts (
-			id int not null auto_increment, primary key(id),
-			title varchar(255) not null,
-			memberid int(11) not null,
-			classid int(11) not null,
-			content bigtext not null,
-			date_posted varchar(255) not null,
-			FK classid references classes(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS class_posts (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			title VARCHAR (255) NOT NULL,
+			memberid INT (11) NOT NULL,
+			classid INT (11) NOT NULL,
+			parentid INT (11) NOT NULL DEFAULT 0,
+			content MEDIUMTEXT NOT NULL,
+			date_posted VARCHAR (255) NOT NULL,
+			last_update TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+				ON UPDATE CURRENT_TIMESTAMP
+			FOREIGN KEY (classid) REFERENCES classes(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists classes_posts_comments (
-			id int not null auto_increment, primary key(Id),
-			memberid int(11) not null,
-			postid int(11) not null,
-			content text not null,
-			date_posted varchar(255) not null,
-			FK postid references classes_posts(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS classes_posts_comments (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			postid INT (11) NOT NULL,
+			content TEXT NOT NULL,
+			date_posted VARCHAR (255) NOT NULL,
+			FOREIGN KEY (postid) REFERENCES classes_posts(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists classes_files (
-			id int not null auto_increment, primary key(id),
-			postid int(11) not null,
-			file_name varchar(255),
-			file_link varchar(255),
-			mime_type varchar(50),
-			file_size varchar(20),
-			FK postid references classes_posts(id),
+	$query="CREATE TABLE IF NOT EXISTS classes_files (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			postid INT (11) NOT NULL,
+			file_name VARCHAR (255),
+			file_link VARCHAR (255),
+			mime_type VARCHAR (50),
+			file_size VARCHAR (20),
+			FOREIGN KEY (postid) REFERENCES classes_posts(id),
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists classses_posts_ratings (
-			postid int(11) not null,
-			memberid int(11) not null,
-			rating_date datetime not null,
-			rating_type varchar(20) not null,
-			primary key(memberid,postid),
-			FK postid references classes_posts(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS classses_posts_ratings (
+			postid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			rating_date DATETIME NOT NULL,
+			rating_type VARCHAR (20) NOT NULL,
+			PRIMARY KEY (memberid,postid),
+			FOREIGN KEY (postid) REFERENCES classes_posts(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists classes_comments_ratings (
-			commentid int(11) not null,
-			memberid int(11) not null,
-			rating_date datetime not null,
-			primary key(memberid,commentid),
-			rating_type varchar(20) not null,
-			FK commentid references classes_posts_comments(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS classes_comments_ratings (
+			commentid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			rating_date DATETIME NOT NULL,
+			PRIMARY KEY (memberid,commentid),
+			rating_type VARCHAR (20) NOT NULL,
+			FOREIGN KEY (commentid) REFERENCES classes_posts_comments(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists classses_posts_reports (
-			postid int(11) not null,
-			memberid int(11) not null,
-			report_date datetime not null,
-			comment text not null,
-			primary key(memberid,postid),
-			FK postid references classes_posts(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS classses_posts_reports (
+			postid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			report_date DATETIME NOT NULL,
+			comment TEXT NOT NULL,
+			PRIMARY KEY (memberid,postid),
+			FOREIGN KEY (postid) REFERENCES classes_posts(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists classes_comments_reports (
-			commentid int(11) not null,
-			memberid int(11) not null,
-			report_date datetime not null,
-			comment text not null,
-			FK commentid references classes_posts_comments(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS classes_comments_reports (
+			commentid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			report_date DATETIME NOT NULL,
+			comment TEXT NOT NULL,
+			FOREIGN KEY (commentid) REFERENCES classes_posts_comments(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists pending_friends (
-			id int not null auto_increment, primary key(id),
-			senderid int not null,
-			receiverid int not null,
-			date_sent datetime not null,
-			status tinyint (1) default 0
+	$query="CREATE TABLE IF NOT EXISTS pending_friends (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			senderid INT (11) NOT NULL,
+			receiverid INT (11) NOT NULL,
+			date_sent DATETIME NOT NULL,
+			status TINYINT (1) DEFAULT 0
 			)";
 	//pending:0, accepted: 1, rejected: 2
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists skills (
-			id int not null auto_increment, primary key(Id),
-			name varchar(255) not null,
-			slug varchar (255) not null,
-			status tinyint(1) default 0
+	$query="CREATE TABLE IF NOT EXISTS skills (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			name VARCHAR (255) NOT NULL,
+			slug VARCHAR  (255) NOT NULL,
+			status TINYINT (1) DEFAULT 0
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists members_skills_relationship (
-		memberid int not null,
-		skillid int(11) not null,
-		primary key(memberid, skillid),
-		FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS members_skills_relationship (
+		memberid INT (11) NOT NULL,
+		skillid INT (11) NOT NULL,
+		PRIMARY KEY (memberid, skillid),
+		FOREIGN KEY (memberid) REFERENCES members(id)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE,
-		FK skillid references skills(id)
+		FOREIGN KEY (skillid) REFERENCES skills(id)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE,
 		)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-
-
-	*** start here ***
-
-		$query="create table if not exists live_classes (
-			id int not null auto_increment, primary key(id),
-			topic varchar(255) not null,
-			classid int not null,
-			description text not null,
-			start_time datetime not null,
-			end_time datetime not null,
-			actual_start_time datetime not null,
-			actual_end_time datetime not null,
-			prerequisites text,
-			banner varchar(255),
-			date_created varchar(40) not null,
-			registration_deadline datetime not null,
-			createdby int not null,
-			status tinyint(1) not null,
-			FK classid references classes(id)
+		$query="CREATE TABLE IF NOT EXISTS live_classes (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			topic VARCHAR (255) NOT NULL,
+			classid INT (11) NOT NULL,
+			description TEXT NOT NULL,
+			start_time DATETIME NOT NULL,
+			end_time DATETIME NOT NULL,
+			actual_start_time DATETIME NOT NULL,
+			actual_end_time DATETIME NOT NULL,
+			prerequisites TEXT,
+			banner VARCHAR (255),
+			date_created VARCHAR (40) NOT NULL,
+			registration_deadline DATETIME NOT NULL,
+			createdby INT (11) NOT NULL,
+			status TINYINT (1) NOT NULL,
+			FOREIGN KEY (classid) REFERENCES classes(id)
 
 			)";
 
 	//status: 0 = free, 1=paid only, 2=paid and refer free, 3=refer only
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_fees (
-			id int not null auto_increment, primary key(id),
-			live_classid int(11) not null,
-			amount float not null,
-			discount int not null default 0,
-			FK live_classid references live_classes(id)
+	$query="CREATE TABLE IF NOT EXISTS live_classes_fees (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			live_classid INT (11) NOT NULL,
+			amount FLOAT NOT NULL,
+			discount TINYINT (3) NOT NULL DEFAULT 0,
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_resources (
-			id int not null auto_increment, primary key(id),
-			live_classid int(11) not null,
-			file_name varchar(255),
-			file_link varchar(255),
-			mime_type varchar(50),
-			file_size varchar(20),
-			FK live_classid references live_classes(id)
+	$query="CREATE TABLE IF NOT EXISTS live_classes_resources (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			live_classid INT (11) NOT NULL,
+			file_name VARCHAR (255),
+			file_link VARCHAR (255),
+			mime_type VARCHAR (50),
+			file_size VARCHAR (20),
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_members (
-			live_classid int(11) not null,
-			memberid int(11) not null,
-			primary key(memberid,live_classid),
-			status tinyint(1) default 0,
-			date_joined datetime not null,
-			FK live_classid references live_classes(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS live_classes_members (
+			live_classid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			PRIMARY KEY (memberid,live_classid),
+			status TINYINT (1) DEFAULT 0,
+			date_joined DATETIME NOT NULL,
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
 
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_attendees (
-			live_classid int(11) not null,
-			memberid int(11) not null,
-			primary key(memberid,live_classid),
-			time_joined datetime not null,
-			last_seen datetime not null,
-			flag varchar(60) not null,
-			FK live_classid references live_classes(id),
-			FK memberid references members(id)
+	$query="CREATE TABLE IF NOT EXISTS live_classes_attendees (
+			live_classid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			PRIMARY KEY (memberid,live_classid),
+			time_joined DATETIME NOT NULL,
+			last_seen DATETIME NOT NULL,
+			flag VARCHAR (60) NOT NULL,
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id),
+			FOREIGN KEY (memberid) REFERENCES members(id)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 	/* Find out what flag does  - Should have means to mute a member */
 
-	$query="create table if not exists live_classes_default_questions (
-			id int(11) not null, primary key(id),
-			question text not null,
-			data_type varchar(255),
-			form_element_type varchar(255),
-			value text
+	$query="CREATE TABLE IF NOT EXISTS live_classes_default_questions (
+			id INT (11) NOT NULL, PRIMARY KEY (id),
+			question TEXT NOT NULL,
+			data_type VARCHAR (255),
+			form_element_type VARCHAR (255),
+			value TEXT
 			)";
 			/* value we can set constants like state, country, courses, skills:
 			when we see we populate on frontend with equivalent data
@@ -416,30 +415,30 @@ require_once "Database_Connect.php";
 			value-label relationship and comma to separate options
 			eg book-amazon,song-
 			*/
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists live_classes_default_responses (
-			questionid int(11) not null,
-			memberid int(11) not null,
-			live_classid int(11) not null,
-			value text not null,
-			primary key(questionid,memberid,live_classid),
-			FK live_classid references live_classes(id),
-			FK memberid references members(id),
-			FK questionid references live_classes_default_questions(id),
+	$query="CREATE TABLE IF NOT EXISTS live_classes_default_responses (
+			questionid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			live_classid INT (11) NOT NULL,
+			value text NOT NULL,
+			PRIMARY KEY (questionid,memberid,live_classid),
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id),
+			FOREIGN KEY (memberid) REFERENCES members(id),
+			FOREIGN KEY (questionid) REFERENCES live_classes_default_questions(id),
 			)";
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists live_classes_questions (
-			id int(11) not null, primary key(id),
-			live_classid int(11) not null,
-			question text not null,
-			data_type varchar(255),
-			form_element_type varchar(255),
+	$query="CREATE TABLE IF NOT EXISTS live_classes_questions (
+			id INT (11) NOT NULL, PRIMARY KEY (id),
+			live_classid INT (11) NOT NULL,
+			question text NOT NULL,
+			data_type VARCHAR (255),
+			form_element_type VARCHAR (255),
 			value text,
-			optional tinyint(1) default 1,
-			FK live_classid references live_classes(id)
+			optional TINYINT (1) DEFAULT 1,
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id)
 			)";
 			/* value we can set constants like state, country, courses, skills:
 			when we see we populate on frontend with equivalent data
@@ -447,258 +446,276 @@ require_once "Database_Connect.php";
 			value-label relationship and comma to separate options
 			eg book-amazon,song-
 			*/
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_responses (
-			questionid int(11) not null,
-			memberid int(11) not null,
-			live_classid int(11) not null,
-			value text not null,
-			primary key(questionid,memberid,live_classid),
-			FK live_classid references live_classes(id),
-			FK memberid references members(id),
-			FK questionid references live_classes_default_questions(id),
+	$query="CREATE TABLE IF NOT EXISTS live_classes_responses (
+			questionid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			live_classid INT (11) NOT NULL,
+			value text NOT NULL,
+			PRIMARY KEY (questionid,memberid,live_classid),
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id),
+			FOREIGN KEY (memberid) REFERENCES members(id),
+			FOREIGN KEY (questionid) REFERENCES live_classes_questions(id),
 			)";
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_audio (
-			id int(11) not null, primary key(id),
-			live_classid int(11) not null,
-			audio_file varchar(255) not null,
-			FK live_classid references live_classes(id)
+	$query="CREATE TABLE IF NOT EXISTS live_classes_audio (
+			id INT (11) NOT NULL, PRIMARY KEY (id),
+			live_classid INT (11) NOT NULL,
+			audio_file VARCHAR (255) NOT NULL,
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id)
 			)";
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists chatroom (
-			id int(11) not null auto_increment, primary key(id),
-			memberid int(11) not null,
-			live_classid int(11) not null,
-			chat_date datetime not null,
-			body text not null)";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS live_classes_series (
+			id INT (11) NOT NULL, PRIMARY KEY (id),
+			title VARCHAR (255) NOT NULL,
+			date_created DATETIME NOT NULL
+			)";
+	mysqli_query($link,$query) or die(mysqli_error());
+
+
+	$query="CREATE TABLE IF NOT EXISTS live_classes_series_rel (
+			seriesid INT (11) NOT NULL,
+			live_classid INT (11) NOT NULL,
+			tree TINYINT (3) NOT NULL,
+			PRIMARY KEY (seriesid,live_classid),
+			FOREIGN KEY (seriesid) REFERENCES live_classes_series(id)
+			FOREIGN KEY (live_classid) REFERENCES live_classes(id)
+			)";
+	mysqli_query($link,$query) or die(mysqli_error());
+
+
+	$query="CREATE TABLE IF NOT EXISTS chatroom (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			live_classid INT (11) NOT NULL,
+			chat_date DATETIME NOT NULL,
+			body TEXT NOT NULL)";
+	mysqli_query($link,$query) or die(mysqli_error());
 
 	/*
 	Equivalent to live_classes_attendees
 
-	$query="create table if not exists onlineroom (
-			id int not null auto_increment, primary key(id),
-			memberid varchar(25) not null,
-			live_classid varchar(25) not null,
-			flag varchar(60) not null,
-			entrytime varchar(60) not null)";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS onlineroom (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid VARCHAR (25) NOT NULL,
+			live_classid VARCHAR (25) NOT NULL,
+			flag VARCHAR (60) NOT NULL,
+			entrytime VARCHAR (60) NOT NULL)";
+	mysqli_query($link,$query) or die(mysqli_error());
 */
-$query="create table if not exists live_classes_referrals (
-		id int(11) not null auto_increment,
-		memberid int(11) not null,
-		member_referred_id(11) not null,
-		live_classid int(11) not null,
-		primary key(memberid, member_referred_id, live_classid),
-		referral_date datetime not null
+$query="CREATE TABLE IF NOT EXISTS live_classes_referrals (
+		id INT (11) NOT NULL AUTO_INCREMENT,
+		memberid INT (11) NOT NULL,
+		member_referred_id(11) NOT NULL,
+		live_classid INT (11) NOT NULL,
+		PRIMARY KEY (memberid, member_referred_id, live_classid),
+		referral_date DATETIME NOT NULL
 		)";
-mysql_query($query,$link) or die(mysql_error());
+mysqli_query($link,$query) or die(mysqli_error());
 
 
 
-	$query="create table if not exists live_classes_test (
-			id int(11) not null auto_increment, primary key(id),
-			question_text text not null,
-			live_classid int(11) not null,
-			status tinyint(1) not null default 0)";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS live_classes_test (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			question_text TEXT NOT NULL,
+			live_classid INT (11) NOT NULL,
+			status TINYINT (1) NOT NULL DEFAULT 0)";
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists live_classes_sub_test (
-			id int(11) not null auto_increment, primary key(id),
-			sub_questions text not null,
-			options text not null,
-			right_option text not null,
-			class_test_id int(11))";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS live_classes_sub_test (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			sub_questions TEXT NOT NULL,
+			options TEXT NOT NULL,
+			right_option TEXT NOT NULL,
+			class_test_id INT (11))";
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists test_timing(
-			id int not null auto_increment, primary key(id),
-			live_classid int(11) not null,
-			duration int(11) not null,
-			pass_mark int(11) not null
+	$query="CREATE TABLE IF NOT EXISTS test_timing(
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			live_classid INT (11) NOT NULL,
+			duration INT (11) NOT NULL,
+			pass_mark INT (11) NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists publish_test (
-			id int not null auto_increment, primary key(id),
-			memberid int(11) not null,
-			live_classid int(11) not null,
-			score float not null,
-			date_taken datetime not null
+	$query="CREATE TABLE IF NOT EXISTS publish_test (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			live_classid INT (11) NOT NULL,
+			score FLOAT NOT NULL,
+			date_taken DATETIME NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists live_classes_test_answers (
-			questionid int(11) not null,
-			memberid int(11) not null,
-			live_classid int(11) not null,
-			value text not null,
-			primary key(questionid,memberid),
-			FK memberid references members(id),
-			FK questionid references live_classes_sub_test(id),
+	$query="CREATE TABLE IF NOT EXISTS live_classes_test_answers (
+			questionid INT (11) NOT NULL,
+			memberid INT (11) NOT NULL,
+			live_classid INT (11) NOT NULL,
+			value TEXT NOT NULL,
+			PRIMARY KEY (questionid,memberid),
+			FOREIGN KEY (memberid) REFERENCES members(id),
+			FOREIGN KEY (questionid) REFERENCES live_classes_sub_test(id),
 			)";
 
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists mods (
-			id int not null auto_increment, primary key(id, memberid),
-			memberid int,
-			permit text)";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS news_categories (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			name VARCHAR (50))";
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists mods_pages (
-			id int not null auto_increment, primary key(id, page),
-			page varchar(255),
-			pagetitle varchar(255))";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS news_details (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			category_id INT (11) NOT NULL,
+			title VARCHAR (255) NOT NULL,
+			body MEDIUMTEXT NOT NULL,
+			pic VARCHAR (255),
+			memberid INT (11) NOT NULL,
+			post_date DATETIME NOT NULL)";
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists logged (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			timeupdate varchar(255)
+
+	$query="CREATE TABLE IF NOT EXISTS newspics (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			name VARCHAR (255) NOT NULL,
+			tag VARCHAR (255) NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists news_categories (
-			id int not null auto_increment, primary key(id),
-			categoryname varchar(255))";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS news_comments (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			postid INT (11) NOT NULL,
+			comment text NOT NULL,
+			comment_date DATETIME NOT NULL)";
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists news_details (
-			id int not null auto_increment, primary key(id),
-			categoryid int not null,
-			title text not null,
-			body text not null,
-			pic varchar(255),
-			sender varchar(255),
-			date varchar(60) not null)";
-	mysql_query($query,$link) or die(mysql_error());
+	$query="CREATE TABLE IF NOT EXISTS blog (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			title VARCHAR (255) NOT NULL,
+			description MEDIUMTEXT NOT NULL,
+			blog_photo VARCHAR (255),
+			blog_category VARCHAR (255),
+			tags VARCHAR (255),
+			upload_date  DATETIME NOT NULL,
+			featured TINYINT(1) NOT NULL DEFAULT 0)";
+	mysqli_query($link,$query) or die(mysqli_error());
 
+	$query="CREATE TABLE IF NOT EXISTS blog_comments (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			postid INT (11) NOT NULL,
+			comment TEXT NOT NULL,
+			comment_date VARCHAR (50))";
+	mysqli_query($link,$query) or die(mysqli_error());
 
-
-	$query="create table if not exists newspics (
-			id int not null auto_increment, primary key(id),
-			name varchar(255) not null,
-			tag varchar(255) not null
+	$query="CREATE TABLE IF NOT EXISTS blogpics (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			name VARCHAR (255) NOT NULL,
+			tag VARCHAR (255) NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
-	$query="create table if not exists news_comments (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			postid int not null,
-			comment text not null,
-			commentdate varchar(50))";
-	mysql_query($query,$link) or die(mysql_error());
-
-	$query="create table if not exists blog (
-			id int not null auto_increment, primary key(id),
-			title varchar(255) not null,
-			description text not null,
-			blog_photo varchar(255),
-			blog_category varchar(255),
-			tags varchar(255),
-			upload_date  varchar(255),
-			featured int not null)";
-	mysql_query($query,$link) or die(mysql_error());
-
-	$query="create table if not exists blog_comments (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			postid int not null,
-			comment text not null,
-			commentdate varchar(50))";
-	mysql_query($query,$link) or die(mysql_error());
-
-	$query="create table if not exists blogpics (
-			id int not null auto_increment, primary key(id),
-			name varchar(255) not null,
-			tag varchar(255) not null
+/*
+	$query="CREATE TABLE IF NOT EXISTS adminaccess (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			username VARCHAR (55) NOT NULL,
+			password VARCHAR (55) NOT NULL
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
 
-	$query="create table if not exists adminaccess (
-			id int not null auto_increment, primary key(id),
-			username varchar(55) not null,
-			password varchar(55) not null
+	$query="CREATE TABLE IF NOT EXISTS email_settings (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id, memberid),
+			memberid INT (11) NOT NULL,
+			addfriend int NOT NULL,
+			friendapproved int NOT NULL,
+			internalbox int NOT NULL,
+			replytopost int NOT NULL,
+			studyclassapproved int NOT NULL,
+			testapproved int NOT NULL,
+			newsposts int NOT NULL,
+			newscomments int NOT NULL,
+			joinclassrequest int NOT NULL,
+			joinclassapproved int NOT NULL,
+			takequiz int NOT NULL,
+			postonclasses int NOT NULL,
+			postonclassescreated int NOT NULL,
+			newnews int NOT NULL,
+			newgist int NOT NULL,
+			newblog int NOT NULL,
+			replystatus int NOT NULL DEFAULT 1
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-
-
-	$query="create table if not exists email_settings (
-			id int not null auto_increment, primary key(id, memberid),
-			memberid int not null,
-			addfriend int not null,
-			friendapproved int not null,
-			internalbox int not null,
-			replytopost int not null,
-			studyclassapproved int not null,
-			testapproved int not null,
-			newsposts int not null,
-			newscomments int not null,
-			joinclassrequest int not null,
-			joinclassapproved int not null,
-			takequiz int not null,
-			postonclasses int not null,
-			postonclassescreated int not null,
-			newnews int not null,
-			newgist int not null,
-			newblog int not null,
-			replystatus int not null default 1
-			)";
-	mysql_query($query,$link) or die(mysql_error());
-
-	$query="create table if not exists inbox (
-			id int not null auto_increment, primary key(id),
-			senderid int not null,
-			receiverid int not null,
+	$query="CREATE TABLE IF NOT EXISTS inbox (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			senderid INT (11) NOT NULL,
+			receiverid INT (11) NOT NULL,
 			message text,
-			date_sent varchar(255),
+			date_sent VARCHAR (255),
 			parentid text,
 			rec_read int,
 			rec_delete int,
 			sender_delete int
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists tasks (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			email varchar(255) not null,
-			confirmed int not null,
+	$query="CREATE TABLE IF NOT EXISTS tasks (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			email VARCHAR (255) NOT NULL,
+			confirmed int NOT NULL,
 			subject text,
 			message text
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
-	$query="create table if not exists notices (
-			id int not null auto_increment, primary key(id),
-			memberid int not null,
-			message text not null,
-			pic text not null,
-			status int not null,
-			date_sent varchar(255)
+	$query="CREATE TABLE IF NOT EXISTS notices (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			message text NOT NULL,
+			pic text NOT NULL,
+			status int NOT NULL,
+			date_sent VARCHAR (255)
 			)";
-	mysql_query($query,$link) or die(mysql_error());
+	mysqli_query($link,$query) or die(mysqli_error());
 
 
+	$query="CREATE TABLE IF NOT EXISTS mods (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id, memberid),
+			memberid int,
+			permit text)";
+	mysqli_query($link,$query) or die(mysqli_error());
+
+	$query="CREATE TABLE IF NOT EXISTS mods_pages (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id, page),
+			page VARCHAR (255),
+			pagetitle VARCHAR (255))";
+	mysqli_query($link,$query) or die(mysqli_error());
+
+
+	$query="CREATE TABLE IF NOT EXISTS logged (
+			id INT (11) NOT NULL AUTO_INCREMENT, PRIMARY KEY (id),
+			memberid INT (11) NOT NULL,
+			timeupdate VARCHAR (255)
+			)";
+	mysqli_query($link,$query) or die(mysqli_error());
+	*/
 	/*$query="insert into adminaccess values ('', 'skoola', 'ola')";
 		mysql_query($query, $link) or die (mysql_error());
 
